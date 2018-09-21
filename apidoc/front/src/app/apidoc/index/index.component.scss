@@ -1,0 +1,185 @@
+.api-details {
+  color: #333333;
+  min-height: 800px;
+  padding: 6px;
+  p {
+    margin: 6px 0px;
+  }
+  .api-details-title {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+    .type {
+      font-size: 12px;
+    }
+  }
+  .api-panel-title {
+    margin: 6px 0;
+  }
+  .detail-params {
+    margin: 6px 0;
+  }
+
+  .api-panel-footer {
+    background: #ffffff;
+    color: #333333;
+    pre {
+      border-radius: 8px;
+      border: 1px solid #ffe3df;
+      background: rgba(255, 245, 238, 0.18);
+      padding: 8px;
+      font-size: 0.8em;
+    }
+  }
+  .gekai {
+    height: 10px;
+    width: 30px;
+  }
+  .panel {
+    padding: 12px;
+    border: 1px rgba(0, 0, 0, 0.22) solid;
+    margin: 10px auto;
+    border-radius: 15px;
+  }
+}
+
+.centerLogo {
+  margin-top: 240px;
+  color: deepskyblue;
+  font-weight: 600;
+  font-size: 30px;
+  text-align: center;
+  width: 60%;
+  margin-left: 20%;
+  span {
+    font-size: 13px;
+  }
+}
+
+.description {
+  background-color: rgba(255, 236, 219, 0.21);
+  border: 1px solid rgba(199, 90, 98, 0.09);
+  border-radius: 20px;
+  color: #000000;
+  padding: 10px;
+  width: 60%;
+  margin-top: 20px;
+  margin-left: 20%;
+}
+
+:host ::ng-deep nz-layout {
+  height: 100%;
+  overflow: auto;
+}
+
+:host ::ng-deep nz-sider {
+  height: 100%;
+  overflow: auto;
+}
+
+:host ::ng-deep .logo {
+  background: #333;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  height: 64px;
+  line-height: 64px;
+  font-size: 22px;
+  text-align: center;
+  span {
+    font-size: 12px;
+  }
+}
+
+:host ::ng-deep .ant-layout-sider-collapsed .nav-text {
+  display: none;
+}
+
+:host ::ng-deep .ant-layout-sider-collapsed .ant-menu-submenu-title:after {
+  display: none;
+}
+
+:host ::ng-deep .ant-layout-sider-collapsed .anticon {
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+:host ::ng-deep .trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: color .3s;
+}
+
+:host ::ng-deep .trigger:hover {
+  color: #108ee9;
+}
+
+:host ::ng-deep .ant-card-body {
+  padding: 0;
+}
+
+:host ::ng-deep .ant-card-head {
+  height: 32px;
+  line-height: 32px;
+  background: #eee;
+}
+
+:host ::ng-deep nz-layout {
+  overflow: hidden;
+}
+
+:host ::ng-deep nz-sider {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.oinp {
+  border: none;
+  outline-style: none;
+}
+
+textarea {
+  font-weight: 700;
+  font-size: 0.9em;
+  color: #108ee9;
+}
+
+.div-table {
+  table {
+    width: 100%;
+    th {
+      text-align: left;
+      padding: 6px;
+      border: 1px solid rgba(92, 102, 94, 0.06);
+      width: 10%;
+      &:first-child {
+        width: 20%;
+      }
+      &:nth-child(5) {
+        width: 30%;
+      }
+    }
+    td {
+      text-align: left;
+      padding: 6px;
+      border: 1px solid rgba(92, 102, 94, 0.06);
+      width: 10%;
+      &:first-child {
+        width: 20%;
+      }
+      &:nth-child(5) {
+        width: 30%;
+      }
+    }
+  }
+}
+
+pre {
+  border-radius: 8px;
+  border: 1px solid #ffe3df;
+  background: rgba(255, 245, 238, 0.18);
+  padding: 8px;
+  font-size: 0.8em;
+}

@@ -1,0 +1,48 @@
+<div class="div-table">
+  <!--递归-->
+  <div *ngFor="let requestParam of params">
+    <!--第1层-->
+    <table>
+      <tr *ngIf="!requestParam.edit">
+        <td [ngStyle]="{'padding-left':(10+20*index)+'px','color':'red'}"><b>{{requestParam.name}}</b></td>
+        <td>{{requestParam.dataType}}</td>
+        <td>{{requestParam.defaultValue}}</td>
+        <td>{{requestParam.required?'是':'否'}}</td>
+        <td>{{requestParam.description}}</td>
+        <td class="opr">
+          <i class="anticon anticon-plus" nz-tooltip nzTitle="添加子参数" (click)="addSubRequestParam(requestParam.id)"></i>
+          <i class="anticon anticon-minus" nz-tooltip nzTitle="删除" (click)="deleteParam(requestParam.id)"></i>
+          <i class="anticon anticon-edit" nz-tooltip nzTitle="编辑" (click)="requestParam.edit=!requestParam.edit"></i>
+        </td>
+      </tr>
+      <tr *ngIf="requestParam.edit">
+        <td [ngStyle]="{'padding-left':(10+20*index)+'px','color':'red'}">
+          <input nz-input placeholder="填写参数名称" [(ngModel)]="requestParam.name" required>
+        </td>
+        <td>
+          <input nz-input placeholder="填写参数类型" [(ngModel)]="requestParam.dataType" required>
+        </td>
+        <td>
+          <input nz-input placeholder="填写默认值" [(ngModel)]="requestParam.defaultValue">
+        </td>
+        <td>
+          <nz-radio-group [(ngModel)]="requestParam.required">
+            <label nz-radio nzValue="true">是</label>
+            <label nz-radio nzValue="false">否</label>
+          </nz-radio-group>
+        </td>
+        <td>
+          <textarea placeholder="填写描述" nz-input [(ngModel)]="requestParam.description" required></textarea>
+        </td>
+        <td class="opr">
+          <i class="anticon anticon-minus" nz-tooltip nzTitle="删除" (click)="deleteParam(requestParam.id)"></i>
+          <i class="anticon anticon-file" nz-tooltip nzTitle="保存" (click)="saveParam(requestParam)"></i>
+        </td>
+      </tr>
+    </table>
+    <!--第n层-->
+    <div *ngIf="requestParam.list">
+      <app-api-param [params]="requestParam.list" [index]="index+1"></app-api-param>
+    </div>
+  </div>
+</div>

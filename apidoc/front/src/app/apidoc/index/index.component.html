@@ -1,0 +1,226 @@
+<nz-layout *ngIf="isopenapidoc">
+  <!--左侧导航-->
+  <nz-sider [nzWidth]="300" *ngIf="info">
+    <!--版本信息-->
+    <div class="logo" (click)="showInfo()">
+      {{info.title}}<span> ({{info.version}})</span>
+    </div>
+    <!--菜单列表-->
+    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'" dragula="MODULES" [(dragulaModel)]="modules">
+      <li nz-submenu *ngFor="let module of modules; let i = index;">
+        <div class="modules-handel" title (click)="getActions(module)" nz-tooltip nzTitle="{{module.name}}" nzPlacement="topLeft">
+          <i class="anticon anticon-right-circle-o"></i>
+          <i class="anticon anticon-spin anticon-loading" *ngIf="module.isLoadingActions"></i>
+          {{i+1}}. {{module.name}}
+        </div>
+        <ul *ngIf="module.list" dragula="ACTIONS" [(dragulaModel)]="module.list">
+          <li nz-menu-item *ngFor="let action of module.list;let j = index" (click)="getDetail(action)"
+              (dblclick)="actionEdit(action)">
+            <span nz-tooltip nzTitle=" {{action.name}} " nzPlacement="topRight" *ngIf="!action.edit">
+              <i class="anticon anticon-minus-circle-o"></i>
+              <i class="anticon anticon-spin anticon-loading" *ngIf="action.isLoadingDetail"></i>
+              {{i+1}}.{{j+1}}.{{action.name}}
+            </span>
+            <input id="actionInput" [autofocus]="true" nz-input *ngIf="action.edit" [(ngModel)]="action.name"
+                   (blur)="saveAction(action)"/>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nz-sider>
+
+  <!--右侧文档详情布局-->
+  <!--文档信息-->
+  <nz-content *ngIf="info&&!detail" style="background-color: #ffffff;width: 100%;height: 100%;">
+    <!--查看-->
+    <div *ngIf="!edit.info">
+      <div class="centerLogo">
+        {{info.title}}<span>（文档版本：{{info.version}}）</span>
+        <i class="anticon anticon-edit" (click)="edit.info=!edit.info" nz-tooltip nzTitle="编辑"></i>
+      </div>
+      <div class="description">
+        <pre>{{info.description}}</pre>
+      </div>
+    </div>
+    <!--编辑-->
+    <div *ngIf="edit.info">
+      <div class="centerLogo">
+        <input style="width: 220px" nz-input [(ngModel)]="info.title"/>
+        <span>（文档版本： <input style="width: 60px;" nz-input [(ngModel)]="info.version"/>）</span>
+        <i class="anticon anticon-save" (click)="edit.info=!edit.info;saveInfo(info)" nz-tooltip nzTitle="保存"></i>
+      </div>
+      <div class="description">
+        <textarea nz-input [nzAutosize]="{minRows: 3, minRows: 6 }" [(ngModel)]="info.description"></textarea>
+      </div>
+    </div>
+  </nz-content>
+  <!--content 详细内容-->
+  <nz-content *ngIf="detail" style="background-color: #ffffff;">
+    <div class="api-details">
+
+      <!--演示-->
+      <div class="panel">
+        <div class="api-panel-title">
+          <p class="api-details-title">演示</p>
+        </div>
+        <div class="panel-footer">
+          <h5 style="margin: 10px">请求地址：</h5>
+          <input nz-input [(ngModel)]="mockUrl" (keyup.enter)="sendTest()"/>
+
+          <!--请求参数为json-->
+          <div *ngIf="!mockShowFrom">
+            <div *ngIf="mockReqParamsStr">
+              <h5 style="margin: 10px">请求参数：</h5>
+              <textarea nz-input [(ngModel)]="mockReqParamsStr" [nzAutosize]="true"></textarea>
+            </div>
+            <!--发送或退出按钮-->
+            <button *ngIf="!isLogout()" nz-button nzType="primary" style="margin-top:10px " (click)="sendTest()">发送
+            </button>
+            <button *ngIf="isLogout()" nz-button nzType="danger"
+                    style="margin-top:10px;background: red;color: #ffffff; " (click)="logout()">退出登陆
+            </button>
+          </div>
+          <!--请求参数为from 且为上传文件  todo 文件和参数混合的暂不考虑-->
+          <div *ngIf="mockShowFrom">
+            <h5 style="margin: 10px">请求参数：</h5>
+            <table>
+              <tr *ngFor="let from of mockReqParamsFrom">
+                <td>{{from.name}}</td>
+                <td>
+                  <!--<input nz-input *ngIf="!contain(from.dataType,'file')" style="font-size: 0.8em; display: inline;"-->
+                  <!--[(ngModel)]="from.defaultValue" type="text"/>-->
+                  <input nz-input style="font-size: 0.8em; display: inline;" multiple
+                         (change)="sendFile($event,from.name)"
+                         type="file"/>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!--响应数据-->
+          <div *ngIf="mockShowResponse">
+            <h5 style="margin: 10px">响应数据：</h5>
+            <textarea *ngIf="!mockShowBlob" style="height: 600px;background-color: #ffedf4; " nz-input
+                      [(ngModel)]="mockResponse"
+                      [nzAutosize]="true"></textarea>
+            <img style="width: 180px;height: 30px;" *ngIf="mockShowBlob" src="{{mockBlobUrl}}">
+          </div>
+
+        </div>
+      </div>
+
+      <!--基本信息-->
+      <div class="panel">
+        <div class="api-panel-title">
+          <p class="api-details-title">基本信息</p>
+        </div>
+        <div class="panel-footer">
+          <p>请求类型:<span class="jg"></span> HTTP</p>
+          <p>接口地址: <span class="jg"></span>{{detail.mapping}}</p>
+          <p>请求方式: <span class="jg"></span>{{detail.requestMethod}}</p>
+          <div>接口描述: <span class="jg"></span>
+            <i style="color: #1aa9ff;margin-right: 10px" class="anticon anticon-edit" *ngIf="!edit.actionDescription"
+               (click)="edit.actionDescription=!edit.actionDescription" nz-tooltip nzTitle="编辑"></i>
+            <i style="color: #1aa9ff;margin-right: 10px" class="anticon anticon-save" *ngIf="edit.actionDescription"
+               (click)="edit.actionDescription=!edit.actionDescription;saveDescription(detail.description)" nz-tooltip
+               nzTitle="保存"></i>
+            <pre *ngIf="!edit.actionDescription">{{detail.description?detail.description:'无'}}</pre>
+            <textarea *ngIf="edit.actionDescription" nz-input [nzAutosize]="{minRows: 3, minRows: 4 }"
+                      [(ngModel)]="detail.description"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!--请求参数-->
+      <div class="panel">
+        <div class="api-panel-title">
+          <p class="api-details-title">请求参数
+            <span class="type">(类型：{{detail.requestParam.type}})</span>
+            <button style="margin-left: 20px;" nz-button nzType="primary" [nzSize]="'small'" (click)="addFirstRequestParam()">添加一级参数</button>
+          </p>
+        </div>
+        <div class="panel-footer">
+          <!--<pre>描述： {{detail.requestParam.description}}</pre>-->
+          <div *ngIf="detail.requestParam.params&&detail.requestParam.params.length>0" class="detail-params">
+            <div class="div-table">
+              <!--表头-->
+              <table>
+                <tr>
+                  <th>参数名称</th>
+                  <th>类型</th>
+                  <th>默认值</th>
+                  <th>是否必须</th>
+                  <th>描述</th>
+                  <th>操作</th>
+                </tr>
+              </table>
+              <!--表内容：递归展示出 对象中嵌套对象-->
+              <app-api-param [params]="detail.requestParam.params" [index]="0"></app-api-param>
+            </div>
+          </div>
+
+          <div *ngIf="!detail.requestParam||!detail.requestParam.params" style="padding: 8px">
+            无
+          </div>
+        </div>
+      </div>
+
+      <!--响应数据-->
+      <div class="panel">
+        <div class="api-panel-title">
+          <p class="api-details-title">响应数据
+            <span class="type">(类型：{{detail.responseParam.type}})</span>
+          </p>
+        </div>
+        <div class="panel-footer">
+          <!--<pre>描述： {{detail.responseParam.description}}</pre>-->
+          <div *ngIf="detail.responseParam.params">
+            <div class="div-table">
+              <!--表头-->
+              <table>
+                <tr>
+                  <th>参数名称</th>
+                  <th>类型</th>
+                  <th>默认值</th>
+                  <th>是否必须</th>
+                  <th>描述</th>
+                  <th>操作</th>
+                </tr>
+              </table>
+              <!--表内容：递归展示出 对象中嵌套对象-->
+              <app-api-param [params]="detail.responseParam.params" [index]="0"></app-api-param>
+            </div>
+          </div>
+
+          <div *ngIf="!detail.responseParam">
+            无
+          </div>
+        </div>
+      </div>
+
+      <!--示例 from类型 表单的不需要示例-->
+      <div *ngIf="detail&&!mockShowFrom" class="panel">
+        <div class="api-panel-title">
+          <p class="api-details-title">示例
+            <span style="color: red">(*注意：请在headers中携带cookie或者token令牌，以保证访问安全或权限校验)</span>
+          </p>
+        </div>
+        <div class="api-panel-footer">
+          <h5 style="margin: 10px">请求地址：</h5>
+          <pre>{{demoUrl}}</pre>
+
+          <div *ngIf="demoReqParams">
+            <h5 style="margin: 10px">请求参数：</h5>
+            <pre>{{demoReqParams}}</pre>
+          </div>
+          <div *ngIf="demoResponse">
+            <h5 style="margin: 10px">响应数据：</h5>
+            <pre>{{demoResponse}}</pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </nz-content>
+</nz-layout>
+<h1 *ngIf="!isopenapidoc&&isopenapidocShow">文档未开启，请联系管理员！</h1>

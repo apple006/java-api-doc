@@ -1,0 +1,35 @@
+.div-table {
+  table {
+    width: 100%;
+    th {
+      text-align: left;
+      padding: 6px;
+      border: 1px solid rgba(92, 102, 94, 0.06);
+      width: 10%;
+      &:first-child {
+        width: 20%;
+      }
+      &:nth-child(5) {
+        width: 30%;
+      }
+    }
+    td {
+      text-align: left;
+      padding: 6px;
+      border: 1px solid rgba(92, 102, 94, 0.06);
+      width: 10%;
+      &:first-child {
+        width: 20%;
+      }
+      &:nth-child(5) {
+        width: 30%;
+      }
+    }
+  }
+}
+.opr{
+  i{
+    color: #1aa9ff;
+    margin: 0 5px;
+  }
+}
